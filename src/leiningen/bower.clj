@@ -5,7 +5,7 @@
              [with-json-file environmental-consistency transform-deps]]
             [cheshire.core :as json]
             [leiningen.npm.deps :refer [resolve-node-deps]]
-            [leiningen.npm.process :refer [exec]]
+            [leiningen.npm.process :refer [exec iswin]]
             [robert.hooke]
             [leiningen.deps]
             [clojure.java.io :as io]))
@@ -27,7 +27,8 @@
 
 (defn- invoke
   [project & args]
-  (let [local-bower (io/as-file "./node_modules/bower/bin/bower")
+  (let [file-name (if (iswin) "./node_modules/.bin/bower.cmd" "./node_modules/bower/bin/bower")
+        local-bower (io/as-file file-name)
         cmd (if (.exists local-bower) (.getPath local-bower) "bower")]
     (exec (project :root) (cons cmd args))))
 
